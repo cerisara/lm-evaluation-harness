@@ -3,10 +3,12 @@ from lm_eval import tasks, evaluator
 import transformers
 import torch
 from lm_eval.base import BaseLM
+import autoFinetuneServer
 
 class MyMod(BaseLM):
     def __init__(
         self,
+        mygpt,
         device="cpu",
         pretrained="gpt2",
         revision="main",
@@ -35,10 +37,13 @@ class MyMod(BaseLM):
             )
 
         # TODO: update this to be less of a hack once subfolder is fixed in HF
-        self.gpt2 = transformers.AutoModelForCausalLM.from_pretrained(
-            pretrained,
-            revision=revision + ("/" + subfolder if subfolder is not None else ""),
-        ).to(self.device)
+        # self.gpt2 = transformers.AutoModelForCausalLM.from_pretrained(
+        #     pretrained,
+        #     revision=revision + ("/" + subfolder if subfolder is not None else ""),
+        # ).to(self.device)
+
+        #self.gpt2 = autoFinetuneServer.initmod()
+        self.gpt2 = mygpt
         self.gpt2.eval()
 
         # pretrained tokenizer for neo is broken for now so just hard-coding this to gpt2
@@ -127,13 +132,13 @@ class MyMod(BaseLM):
             context, max_length=max_length, eos_token_id=eos_token_id, do_sample=False
         )
 
+def runeval(mygpt):
+    mymod = MyMod(mygpt)
 
-mymod = MyMod()
+    descdict = {'device':'cpu','task':'lambada'}
+    results = evaluator.simple_evaluate(mymod,device='cpu',tasks=['lambada'],description_dict=descdict,num_fewshot=0,no_cache=True)
 
-descdict = {'device':'cpu','task':'lambada'}
-results = evaluator.simple_evaluate(mymod,device='cpu',tasks=['lambada'],description_dict=descdict,num_fewshot=0,no_cache=True)
+    print(results)
 
-print(results)
-
-# dumped = json.dumps(results, indent=2)
-# print(dumped)
+    # dumped = json.dumps(results, indent=2)
+    # print(dumped)
