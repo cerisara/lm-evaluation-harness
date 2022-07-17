@@ -133,5 +133,7 @@ mymod = MyMod()
 descdict = {'device':'cpu','task':'lambada'}
 results = evaluator.simple_evaluate(mymod,device='cpu',tasks=['lambada'],description_dict=descdict,num_fewshot=0,no_cache=True)
 
-dumped = json.dumps(results, indent=2)
-print(dumped)
+print(results)
+
+# dumped = json.dumps(results, indent=2)
+# print(dumped)
