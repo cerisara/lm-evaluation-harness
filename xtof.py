@@ -136,7 +136,7 @@ def runeval(mygpt):
     mymod = MyMod(mygpt)
 
     descdict = {'device':'cpu','task':'lambada'}
-    results = evaluator.simple_evaluate(mymod,device='cpu',tasks=['lambada'],description_dict=descdict,num_fewshot=0,no_cache=True)
+    results = evaluator.simple_evaluate(mymod,device='cpu',tasks=['lambada'],limit=10,description_dict=descdict,num_fewshot=0,no_cache=True)
 
     print(results)
 
